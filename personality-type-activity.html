@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Who Are You? — Personality & Identity Activity</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #f5f0e8;
+    --cream: #ede8dc;
+    --accent: #c0392b;
+    --gold: #d4a017;
+    --muted: #7a7264;
+    --analyst: #5c6bc0;
+    --diplomat: #66bb6a;
+    --sentinel: #ffa726;
+    --explorer: #ef5350;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 2.5rem 2rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -80px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(192,57,43,0.15);
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 40px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(212,160,23,0.1);
+  }
+  .header-inner { max-width: 860px; margin: 0 auto; position: relative; z-index: 1; }
+  .eyebrow {
+    font-size: .72rem; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--gold); font-weight: 500; margin-bottom: .6rem;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.1;
+    margin-bottom: .8rem;
+  }
+  header h1 em { color: var(--gold); font-style: italic; }
+  header p {
+    font-size: .95rem; color: rgba(245,240,232,.75);
+    max-width: 540px; line-height: 1.7;
+  }
+
+  /* ── MAIN WRAPPER ── */
+  main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+  /* ── ENTRY PANEL ── */
+  .entry-card {
+    background: white;
+    border: 2px solid var(--ink);
+    border-radius: 4px;
+    padding: 2rem 2.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+  .entry-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem; margin-bottom: .4rem;
+  }
+  .entry-card p { font-size: .88rem; color: var(--muted); margin-bottom: 1.4rem; }
+  .type-input-row { display: flex; gap: .8rem; align-items: center; flex-wrap: wrap; }
+  .type-input {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; font-weight: 700;
+    letter-spacing: .2em; text-transform: uppercase;
+    width: 160px; padding: .5rem .8rem;
+    border: 2px solid var(--ink); border-radius: 2px;
+    background: var(--cream); color: var(--ink);
+    outline: none;
+    transition: box-shadow .2s;
+  }
+  .type-input:focus { box-shadow: 4px 4px 0 var(--accent); }
+  .go-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: .9rem; font-weight: 500; letter-spacing: .06em;
+    padding: .7rem 1.8rem;
+    background: var(--accent); color: white;
+    border: 2px solid var(--accent); border-radius: 2px;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .go-btn:hover { transform: translate(-2px,-2px); box-shadow: 4px 4px 0 var(--ink); }
+  .error-msg { font-size: .82rem; color: var(--accent); margin-top: .6rem; display: none; }
+
+  /* ── TYPE BADGE ── */
+  .type-badge-row {
+    display: none;
+    align-items: center;
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+    background: white;
+    border: 2px solid var(--ink);
+    border-radius: 4px;
+    padding: 1.2rem 2rem;
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+  .type-badge-row.show { display: flex; }
+  .badge-letters {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem; font-weight: 700; letter-spacing: .1em;
+    line-height: 1;
+  }
+  .badge-divider { width: 2px; height: 50px; background: var(--ink); opacity: .15; }
+  .badge-info h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem; margin-bottom: .2rem;
+  }
+  .badge-role {
+    font-size: .78rem; letter-spacing: .14em; text-transform: uppercase;
+    font-weight: 500; padding: .2rem .6rem; border-radius: 2px;
+    display: inline-block; color: white; margin-top: .3rem;
+  }
+  .role-analyst   { background: var(--analyst); }
+  .role-diplomat  { background: var(--diplomat); }
+  .role-sentinel  { background: var(--sentinel); color: var(--ink); }
+  .role-explorer  { background: var(--explorer); }
+
+  /* ── ACTIVITY SECTIONS ── */
+  .activity-wrap { display: none; }
+  .activity-wrap.show { display: block; }
+
+  .section-label {
+    font-size: .7rem; letter-spacing: .18em; text-transform: uppercase;
+    font-weight: 500; color: var(--muted); margin-bottom: .6rem;
+    display: flex; align-items: center; gap: .6rem;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px; background: currentColor; opacity: .3;
+  }
+
+  .activity-card {
+    background: white;
+    border: 2px solid var(--ink);
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    box-shadow: 4px 4px 0 var(--cream);
+    transition: box-shadow .2s;
+  }
+  .activity-card:hover { box-shadow: 4px 4px 0 var(--ink); }
+  .card-header {
+    display: flex; align-items: flex-start; gap: 1rem;
+    padding: 1.3rem 1.6rem 1rem;
+    border-bottom: 1px solid var(--cream);
+  }
+  .card-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight: 700; color: var(--accent);
+    line-height: 1; flex-shrink: 0; width: 2rem; text-align: center;
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; margin-bottom: .2rem;
+  }
+  .card-subtitle { font-size: .82rem; color: var(--muted); line-height: 1.5; }
+  .card-body { padding: 1.2rem 1.6rem 1.4rem; }
+
+  /* ── TRAIT PILLS ── */
+  .trait-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: .7rem; margin-bottom: 1.2rem;
+  }
+  .trait-pill {
+    border: 1.5px solid var(--ink); border-radius: 3px;
+    padding: .55rem .9rem;
+    display: flex; align-items: center; gap: .6rem;
+  }
+  .trait-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 700; color: var(--accent);
+    width: 1.2rem;
+  }
+  .trait-text { font-size: .82rem; line-height: 1.4; }
+  .trait-text strong { display: block; font-size: .9rem; }
+
+  /* ── PROMPTS ── */
+  .prompt-list { list-style: none; }
+  .prompt-list li {
+    padding: .8rem 0;
+    border-bottom: 1px dashed rgba(26,26,46,.15);
+    font-size: .9rem; line-height: 1.7;
+    display: flex; gap: .7rem;
+  }
+  .prompt-list li:last-child { border-bottom: none; }
+  .prompt-icon { flex-shrink: 0; font-size: 1rem; margin-top: .1rem; }
+
+  /* ── WRITING BOX ── */
+  .write-area {
+    width: 100%; min-height: 110px;
+    border: 1.5px solid rgba(26,26,46,.25); border-radius: 2px;
+    padding: .8rem 1rem; font-family: 'DM Sans', sans-serif;
+    font-size: .88rem; line-height: 1.7; resize: vertical;
+    background: var(--cream); color: var(--ink);
+    outline: none; transition: border-color .2s;
+    margin-top: .8rem;
+  }
+  .write-area:focus { border-color: var(--accent); }
+  .write-label { font-size: .78rem; color: var(--muted); margin-bottom: .3rem; font-weight: 500; }
+
+  /* ── CHARACTER CONNECT ── */
+  .char-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: .7rem; margin-bottom: 1rem;
+  }
+  .char-card {
+    border: 1.5px solid rgba(26,26,46,.2); border-radius: 3px;
+    padding: .7rem .9rem;
+    font-size: .82rem; line-height: 1.5;
+    cursor: pointer; transition: all .15s;
+    background: var(--cream);
+  }
+  .char-card:hover { border-color: var(--accent); background: white; }
+  .char-card.selected { border-color: var(--accent); background: rgba(192,57,43,.06); box-shadow: 0 0 0 1px var(--accent); }
+  .char-card strong { display: block; font-size: .9rem; margin-bottom: .15rem; }
+  .char-card span { color: var(--muted); font-size: .78rem; }
+
+  /* ── DISCUSSION ── */
+  .discuss-wrap {
+    display: grid; grid-template-columns: 1fr 1fr; gap: .8rem;
+  }
+  .discuss-item {
+    border: 1.5px solid rgba(26,26,46,.2); border-radius: 3px;
+    padding: .9rem 1rem; font-size: .85rem; line-height: 1.6;
+    background: var(--cream);
+  }
+  .discuss-item::before {
+    content: attr(data-q);
+    display: block; font-size: 1.2rem; margin-bottom: .4rem;
+  }
+
+  /* ── STANDARD TAG ── */
+  .standard-tag {
+    display: inline-flex; align-items: center; gap: .35rem;
+    font-size: .7rem; color: var(--muted);
+    border: 1px solid rgba(26,26,46,.15); border-radius: 2px;
+    padding: .2rem .5rem; margin-top: 1rem;
+  }
+
+  /* ── PRINT BTN ── */
+  .print-row {
+    display: none; justify-content: flex-end; margin-top: .5rem;
+  }
+  .print-row.show { display: flex; }
+  .print-btn {
+    font-size: .82rem; font-weight: 500;
+    padding: .5rem 1.2rem;
+    background: transparent; color: var(--ink);
+    border: 1.5px solid var(--ink); border-radius: 2px;
+    cursor: pointer; transition: all .15s;
+  }
+  .print-btn:hover { background: var(--ink); color: var(--paper); }
+
+  @media (max-width: 600px) {
+    .trait-grid, .discuss-wrap { grid-template-columns: 1fr; }
+    .card-header { flex-direction: column; gap: .4rem; }
+    .type-input-row { flex-direction: column; align-items: flex-start; }
+  }
+
+  @media print {
+    body { background: white; }
+    .entry-card, .go-btn, .print-btn, .print-row, .type-input { display: none !important; }
+    .activity-wrap.show { display: block !important; }
+    .type-badge-row.show { display: flex !important; }
+    .activity-card { box-shadow: none; break-inside: avoid; }
+    header { background: black; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="eyebrow">11th Grade ELA · Identity &amp; Self-Knowledge</div>
+    <h1>Who Are <em>You</em>?</h1>
+    <p>You just took a personality test. Now let's think critically about what it says — and what it <em>doesn't</em> say — about who you are as a person and a reader.</p>
+  </div>
+</header>
+
+<main>
+  <!-- TYPE ENTRY -->
+  <div class="entry-card">
+    <h2>Enter Your Personality Type</h2>
+    <p>Type your 4-letter result from 16Personalities (e.g., INFJ, ESTP, ENFP…). Not sure? Check your results page.</p>
+    <div class="type-input-row">
+      <input class="type-input" id="typeInput" maxlength="4" placeholder="XXXX" autocomplete="off" spellcheck="false">
+      <button class="go-btn" onclick="loadType()">Generate My Activity →</button>
+    </div>
+    <div class="error-msg" id="errorMsg">Please enter a valid 4-letter type (e.g., INFJ, ESTP).</div>
+  </div>
+
+  <!-- TYPE BADGE -->
+  <div class="type-badge-row" id="typeBadge">
+    <div class="badge-letters" id="badgeLetters"></div>
+    <div class="badge-divider"></div>
+    <div class="badge-info">
+      <h3 id="badgeTitle"></h3>
+      <div style="font-size:.85rem;color:var(--muted);line-height:1.6;" id="badgeDesc"></div>
+      <span class="badge-role" id="badgeRole"></span>
+    </div>
+  </div>
+
+  <!-- PRINT -->
+  <div class="print-row" id="printRow">
+    <button class="print-btn" onclick="window.print()">🖨 Print / Save PDF</button>
+  </div>
+
+  <!-- ACTIVITY CONTENT -->
+  <div class="activity-wrap" id="activityWrap">
+
+    <!-- SECTION 1: DECODE -->
+    <div class="section-label">Part 1 — Decode Your Type</div>
+    <div class="activity-card">
+      <div class="card-header">
+        <div class="card-num">1</div>
+        <div>
+          <div class="card-title">What Do Your Four Letters Mean?</div>
+          <div class="card-subtitle">Each letter in your type represents a dimension of how you perceive and interact with the world. Break it down below.</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="trait-grid" id="traitGrid"></div>
+        <div class="write-label">In your own words: How accurately does each letter describe you? Are there any that feel "off" or surprising?</div>
+        <textarea class="write-area" placeholder="Write 3–5 sentences reflecting on your four dimensions…"></textarea>
+        <div class="standard-tag">📌 NJSLS W.11-12.4 · Produce clear writing appropriate to task and audience</div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: REFLECT -->
+    <div class="section-label">Part 2 — Think Critically</div>
+    <div class="activity-card">
+      <div class="card-header">
+        <div class="card-num">2</div>
+        <div>
+          <div class="card-title">Personality Tests: Useful Tool or Oversimplification?</div>
+          <div class="card-subtitle">Good thinkers don't just accept a label — they interrogate it. Respond to the prompts below.</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <ul class="prompt-list">
+          <li><span class="prompt-icon">🔍</span>What does your type get <em>right</em> about you? Give a specific real-life example that supports the description.</li>
+          <li><span class="prompt-icon">❌</span>What does your type get <em>wrong</em> or leave out? What part of yourself doesn't show up in these four letters?</li>
+          <li><span class="prompt-icon">🧠</span>16Personalities describes personality as partially innate and partially shaped by experience. Do you agree? What experiences have shaped <em>your</em> personality?</li>
+          <li><span class="prompt-icon">⚖️</span>Could knowing someone's personality type be used against them — to stereotype or box them in? Where's the line between self-understanding and labeling?</li>
+        </ul>
+        <div class="write-label">Choose ONE prompt above and write a developed paragraph (6–8 sentences) in response:</div>
+        <textarea class="write-area" style="min-height:140px" placeholder="I chose prompt # ___ …"></textarea>
+        <div class="standard-tag">📌 NJSLS RI.11-12.6 · Evaluate point of view and rhetorical choices</div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: CHARACTER CONNECT -->
+    <div class="section-label">Part 3 — Character Connection</div>
+    <div class="activity-card">
+      <div class="card-header">
+        <div class="card-num">3</div>
+        <div>
+          <div class="card-title">Find Your Literary Twin</div>
+          <div class="card-subtitle">Personality frameworks are exactly the kind of lens literary critics use to analyze characters. Think about a character you've read, watched, or studied.</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p style="font-size:.88rem;color:var(--muted);margin-bottom:.9rem;">Click any character below that you think might share traits with your type — or add your own in the text box.</p>
+        <div class="char-grid" id="charGrid"></div>
+        <div class="write-label">Describe the character you chose and explain the connection in 4–6 sentences. Use specific evidence from the text.</div>
+        <textarea class="write-area" placeholder="The character I chose is ___. Like me, this character seems to be ___ because…"></textarea>
+        <div class="standard-tag">📌 NJSLS RL.11-12.3 · Analyze how characters develop and interact with other elements of the text</div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: DISCUSSION PREP -->
+    <div class="section-label">Part 4 — Discussion Preparation</div>
+    <div class="activity-card">
+      <div class="card-header">
+        <div class="card-num">4</div>
+        <div>
+          <div class="card-title">Ready to Talk</div>
+          <div class="card-subtitle">Prepare a response to <strong>one</strong> of the discussion questions below. Write your talking points in the box — you should be ready to speak for about 60 seconds.</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="discuss-wrap">
+          <div class="discuss-item" data-q="💬">"Is personality something you're <em>born with</em> or something you <em>build</em>? Can it change?"</div>
+          <div class="discuss-item" data-q="💬">"Do labels like these help us understand ourselves — or do they limit us by creating a fixed idea of who we are?"</div>
+          <div class="discuss-item" data-q="💬">"Why do authors give characters distinct personalities? What does personality reveal that physical description can't?"</div>
+          <div class="discuss-item" data-q="💬">"If your personality shifted dramatically, would you still be <em>you</em>? What makes you, <em>you</em>?"</div>
+        </div>
+        <div class="write-label" style="margin-top:1rem">My talking points for Question # ___:</div>
+        <textarea class="write-area" placeholder="My main claim… My evidence or example… My connection to the bigger idea…"></textarea>
+        <div class="standard-tag">📌 NJSLS SL.11-12.1 · Initiate and participate effectively in collaborative discussion</div>
+      </div>
+    </div>
+
+    <!-- SECTION 5: EXIT TICKET -->
+    <div class="section-label">Exit Ticket</div>
+    <div class="activity-card">
+      <div class="card-header">
+        <div class="card-num">5</div>
+        <div>
+          <div class="card-title">One-Sentence Takeaway</div>
+          <div class="card-subtitle">On a sticky note or index card (or below), complete this sentence. You'll share it on the way out.</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;line-height:1.8;margin-bottom:.8rem;">
+          "Taking this test made me realize _____, but I also think personality tests can't capture _____ because _____."
+        </div>
+        <textarea class="write-area" style="min-height:80px" placeholder="Fill in the blanks in your own words…"></textarea>
+        <div class="standard-tag">📌 NJSLS W.11-12.10 · Write routinely for a range of tasks, purposes, and audiences</div>
+      </div>
+    </div>
+
+  </div><!-- /activity-wrap -->
+</main>
+
+<script>
+const TYPES = {
+  // Analysts
+  INTJ: { title: "The Architect", role: "Analyst", desc: "Strategic, independent thinkers who see the big picture and have a plan for almost everything.", roleClass: "role-analyst" },
+  INTP: { title: "The Logician", role: "Analyst", desc: "Innovative, curious minds who love theoretical problems and get lost in ideas.", roleClass: "role-analyst" },
+  ENTJ: { title: "The Commander", role: "Analyst", desc: "Bold, confident leaders who see inefficiency as a challenge to fix.", roleClass: "role-analyst" },
+  ENTP: { title: "The Debater", role: "Analyst", desc: "Quick-witted and outspoken, ENTPs love arguing all sides just to see where the thinking leads.", roleClass: "role-analyst" },
+  // Diplomats
+  INFJ: { title: "The Advocate", role: "Diplomat", desc: "Idealistic and principled, with a quiet determination to make the world better.", roleClass: "role-diplomat" },
+  INFP: { title: "The Mediator", role: "Diplomat", desc: "Deeply personal and imaginative, guided by values and a rich inner world.", roleClass: "role-diplomat" },
+  ENFJ: { title: "The Protagonist", role: "Diplomat", desc: "Charismatic and empathetic leaders who genuinely care about helping others succeed.", roleClass: "role-diplomat" },
+  ENFP: { title: "The Campaigner", role: "Diplomat", desc: "Free-spirited enthusiasts who see life as full of possibility and human connection.", roleClass: "role-diplomat" },
+  // Sentinels
+  ISTJ: { title: "The Logistician", role: "Sentinel", desc: "Reliable, practical, and honest — they get things done and keep their word.", roleClass: "role-sentinel" },
+  ISFJ: { title: "The Defender", role: "Sentinel", desc: "Dedicated and warm protectors who quietly make sure everyone around them is okay.", roleClass: "role-sentinel" },
+  ESTJ: { title: "The Executive", role: "Sentinel", desc: "Organized and assertive, they believe in doing things the right way and enforcing standards.", roleClass: "role-sentinel" },
+  ESFJ: { title: "The Consul", role: "Sentinel", desc: "Caring, social, and attuned to the needs of others — they keep communities together.", roleClass: "role-sentinel" },
+  // Explorers
+  ISTP: { title: "The Virtuoso", role: "Explorer", desc: "Bold and practical experimenters, masters of tools and hands-on problem solving.", roleClass: "role-explorer" },
+  ISFP: { title: "The Adventurer", role: "Explorer", desc: "Flexible and charming artists who live in the moment and embrace new experiences.", roleClass: "role-explorer" },
+  ESTP: { title: "The Entrepreneur", role: "Explorer", desc: "Energetic and action-oriented, they make the most of what's in front of them right now.", roleClass: "role-explorer" },
+  ESFP: { title: "The Entertainer", role: "Explorer", desc: "Spontaneous and enthusiastic, they bring energy and excitement to everything they do.", roleClass: "role-explorer" },
+};
+
+const TRAITS = {
+  E: { label: "Extraversion", desc: "You gain energy from being around people and tend to think out loud." },
+  I: { label: "Introversion", desc: "You recharge alone and tend to think things through before speaking." },
+  N: { label: "Intuition", desc: "You focus on patterns, possibilities, and the big picture." },
+  S: { label: "Sensing", desc: "You focus on concrete facts, details, and lived experience." },
+  T: { label: "Thinking", desc: "You make decisions based on logic, consistency, and objective criteria." },
+  F: { label: "Feeling", desc: "You make decisions based on values, empathy, and the impact on people." },
+  J: { label: "Judging", desc: "You prefer structure, plans, and a sense of closure." },
+  P: { label: "Perceiving", desc: "You prefer flexibility, spontaneity, and keeping options open." },
+};
+
+const CHARACTERS = [
+  { name: "Jay Gatsby", work: "The Great Gatsby", trait: "Visionary idealist" },
+  { name: "Holden Caulfield", work: "Catcher in the Rye", trait: "Introspective rebel" },
+  { name: "Elizabeth Bennet", work: "Pride & Prejudice", trait: "Witty & independent" },
+  { name: "Hamlet", work: "Hamlet", trait: "Analytical overthinker" },
+  { name: "Atticus Finch", work: "To Kill a Mockingbird", trait: "Principled & calm" },
+  { name: "Katniss Everdeen", work: "The Hunger Games", trait: "Reluctant hero" },
+  { name: "Winston Smith", work: "1984", trait: "Quietly defiant" },
+  { name: "Walter White", work: "Breaking Bad", trait: "Controlled egoist" },
+  { name: "Ophelia", work: "Hamlet", trait: "Sensitive & trapped" },
+  { name: "Nick Carraway", work: "The Great Gatsby", trait: "Observant outsider" },
+  { name: "Anne Frank", work: "The Diary of a Young Girl", trait: "Hopeful & expressive" },
+  { name: "Other (describe below)", work: "", trait: "" },
+];
+
+function loadType() {
+  const raw = document.getElementById('typeInput').value.trim().toUpperCase().replace(/[^A-Z]/g,'');
+  const err = document.getElementById('errorMsg');
+
+  if (raw.length !== 4 || !TYPES[raw]) {
+    err.style.display = 'block';
+    err.textContent = TYPES[raw] === undefined && raw.length === 4
+      ? `"${raw}" isn't a valid 16Personalities type. Double-check your result!`
+      : 'Please enter a valid 4-letter type (e.g., INFJ, ESTP).';
+    return;
+  }
+  err.style.display = 'none';
+
+  const info = TYPES[raw];
+
+  // Badge
+  document.getElementById('badgeLetters').textContent = raw;
+  document.getElementById('badgeTitle').textContent = info.title;
+  document.getElementById('badgeDesc').textContent = info.desc;
+  const roleEl = document.getElementById('badgeRole');
+  roleEl.textContent = info.role;
+  roleEl.className = 'badge-role ' + info.roleClass;
+  document.getElementById('typeBadge').classList.add('show');
+
+  // Trait grid
+  const grid = document.getElementById('traitGrid');
+  grid.innerHTML = '';
+  [...raw].forEach(letter => {
+    const t = TRAITS[letter];
+    const pill = document.createElement('div');
+    pill.className = 'trait-pill';
+    pill.innerHTML = `<div class="trait-letter">${letter}</div><div class="trait-text"><strong>${t.label}</strong>${t.desc}</div>`;
+    grid.appendChild(pill);
+  });
+
+  // Character grid
+  const cg = document.getElementById('charGrid');
+  cg.innerHTML = '';
+  CHARACTERS.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'char-card';
+    card.innerHTML = `<strong>${c.name}</strong><span>${c.work}${c.trait ? ' · ' + c.trait : ''}</span>`;
+    card.addEventListener('click', () => card.classList.toggle('selected'));
+    cg.appendChild(card);
+  });
+
+  document.getElementById('activityWrap').classList.add('show');
+  document.getElementById('printRow').classList.add('show');
+  document.getElementById('activityWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+document.getElementById('typeInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') loadType();
+});
+</script>
+</body>
+</html>
